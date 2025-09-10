@@ -95,28 +95,29 @@ body {
 }
 
 .add-task-form {
-  width: 100%;
+  width: fit-content;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 5px;
 }
 
-.add-task-form input {
+.add-task-form input, select {
   flex: 1;
-  padding: 10px 8px;
+  padding: 10px;
   border: none;
   outline: none;
   border-radius: 22px;
   background: rgba(142, 104, 230, 0.25);
   color: #fff;
   font-family: "Roboto", sans-serif;
+  font-size: 11px;
 }
 
 .add-task-form button {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: 10px;
   padding: 10px;
   border-radius: 50%;
   color: #fff;
@@ -133,7 +134,6 @@ body {
 }
 
 #priority-select {
-  margin-left: 10px;
   padding: 10px 8px;
   border-radius: 18px;
   border: none;
@@ -209,8 +209,8 @@ body {
   background: rgba(255, 255, 255, 0.3);
   border: none;
   border-radius: 50%;
-  width: 30px;
-  height: 30px;
+  width: 25px;
+  height: 25px;
   color: #fff;
   font-size: 0.8rem;
   cursor: pointer;
@@ -218,6 +218,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-left: 5px;
 }
 
 .task-buttons button:hover {
