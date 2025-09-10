@@ -17,11 +17,22 @@ const submit = async function( event ) {
   })
 
   const text = await response.text()
-
   console.log( "text:", text )
 }
 
+//clock functionality
+function startClock() {
+  const el = document.getElementById("today");
+  const fmt = () => {
+    const now = new Date();
+    el.textContent = `today is: ${now.toLocaleString()}`;
+  };
+  fmt();
+  setInterval(fmt, 1000);
+}
+
 window.onload = function() {
+   startClock();
    const button = document.querySelector("button");
   button.onclick = submit;
 }
