@@ -220,3 +220,19 @@ body {
   background: rgba(255, 104, 104, 0.25);
 }
 
+.confetti {
+  position: fixed;
+  top: -10px;
+  width: 8px;
+  height: 12px;
+  background: #ff7eb7;
+  opacity: 0.9;
+  animation: drop 3s linear forwards;
+  border-radius: 2px;
+}
+@keyframes drop {
+  to {
+    transform: translateY(110vh) rotate(360deg);
+    opacity: 1;
+  }
+}
