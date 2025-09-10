@@ -1,77 +1,196 @@
-//backend
-const http = require( "http" ),
-      fs   = require( "fs" ),
-      // IMPORTANT: you must run `npm install` in the directory for this assignment
-      // to install the mime library if you"re testing this on your local machine.
-      // However, Glitch will install it automatically by looking in your package.json
-      // file.
-      mime = require( "mime" ),
-      dir  = "public/",
-      port = 3000
+// backend code 
+const http = require("http");
+const fs = require("fs");
+const mime = require("mime");
+const url = require("url");
+const dir = "public/";
+const port = 3000;
 
-//javascript objects - test data
-//javascript array of objects
-      const appdata = [
-  { "model": "toyota", "year": 1999, "mpg": 23 },
-  { "model": "honda", "year": 2004, "mpg": 30 },
-  { "model": "ford", "year": 1987, "mpg": 14} 
-]
+let nextId = 1;
+let appdata = [
+  seed({
+    task: "HW2",
+    creation_date: Date.now(),
+    due_date: "2025-09-15",
+    completed: false,
+  }),
+];
 
-const server = http.createServer( function( request,response ) {
-  if( request.method === "GET" ) {
-    handleGet( request, response )    
-  }else if( request.method === "POST" ){
-    handlePost( request, response ) 
+// Compute days until due date (null if no due date) account for 11:59 date due 
+function computeDaysUntilDue(due_date) {
+  if (!due_date) return null;
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  let startOfDueDay;
+  if (typeof due_date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(due_date)) {
+    const [y, m, d] = due_date.split("-").map(Number);
+    startOfDueDay = new Date(y, m - 1, d);
+  } else {
+    const due = new Date(due_date);
+    startOfDueDay = new Date(due.getFullYear(), due.getMonth(), due.getDate());
   }
-})
+  const DAY_MS = 24 * 60 * 60 * 1000;
+  return Math.round((startOfDueDay - startOfToday) / DAY_MS);
+}
 
-const handleGet = function( request, response ) {
-  const filename = dir + request.url.slice( 1 ) 
+function withDerived(row) {
+  return {
+    ...row,
+    days_until_due: computeDaysUntilDue(row.due_date),
+  };
+}
 
-  if( request.url === "/" ) {
-    sendFile( response, "public/index.html" )
-  }else{
-    sendFile( response, filename )
+function seed(row) {
+  const id = String(nextId++);
+  const {
+    task = "",
+    creation_date = Date.now(),
+    due_date = null,
+    completed = false,
+  } = row || {};
+
+  return {
+    id,
+    task,
+    creation_date,
+    due_date,
+    completed,
+  };
+}
+
+const server = http.createServer((request, response) => {
+  const parsed = url.parse(request.url, true);
+  const pathname = parsed.pathname;
+
+  if (request.method === "GET") {
+    if (pathname === "/todos") return getTodos(response);
+    return handleStaticGet(request, response);
   }
+
+  if (request.method === "POST" && pathname === "/todos")
+    return readBodyJSON(request, response, addTodo);
+
+  if (request.method === "PUT" && pathname === "/todos")
+    return readBodyJSON(request, response, updateTodo);
+
+  if (request.method === "DELETE" && pathname === "/todos")
+    return readBodyJSON(request, response, deleteTodo);
+
+  response.writeHead(404, { "Content-Type": "text/plain" });
+  response.end("404 Not Found");
+});
+
+function getTodos(response) {
+  const out = appdata.map(withDerived);
+  sendJSON(response, 200, out);
 }
 
-const handlePost = function( request, response ) {
-  let dataString = ""
+function addTodo(body, response) {
+  const task = (body.task ?? "").toString().trim();
+  const creation_date = body.creation_date ?? Date.now();
+  const due_date = body.due_date ?? null;
 
-  request.on( "data", function( data ) {
-      dataString += data 
-  })
+  if (!task) return badRequest(response, "Task is required");
 
-  request.on( "end", function() {
-    console.log( JSON.parse( dataString ) )
+  const row = seed({
+    task,
+    creation_date,
+    due_date,
+    completed: false,
+  });
 
-    // ... do something with the data here!!!
+  appdata.push(row);
 
-    response.writeHead( 200, "OK", {"Content-Type": "text/plain" })
-    response.end("test")
-  })
+  const out = appdata.map(withDerived);
+  sendJSON(response, 200, out);
 }
 
-const sendFile = function( response, filename ) {
-   const type = mime.getType( filename ) 
+function updateTodo(body, response) {
+  const id = body.id != null ? String(body.id) : null;
+  if (!id) return badRequest(response, "id is required");
 
-   fs.readFile( filename, function( err, content ) {
+  const idx = appdata.findIndex((t) => t.id === id);
+  if (idx === -1) return notFound(response, "Todo not found");
 
-     // if the error = null, then we"ve loaded the file successfully
-     if( err === null ) {
+  const current = appdata[idx];
 
-       // status code: https://httpstatuses.com
-       response.writeHeader( 200, { "Content-Type": type })
-       response.end( content )
+  const updates = {};
+  if ("task" in body) updates.task = String(body.task ?? "").trim();
+  if ("creation_date" in body) updates.creation_date = body.creation_date;
+  if ("due_date" in body) updates.due_date = body.due_date ?? null;
+  if ("completed" in body) updates.completed = !!body.completed;
 
-     }else{
+  const updated = { ...current, ...updates };
+  appdata[idx] = updated;
 
-       // file not found, error code 404
-       response.writeHeader( 404 )
-       response.end( "404 Error: File Not Found" )
-
-     }
-   })
+  const out = appdata.map(withDerived);
+  sendJSON(response, 200, out);
 }
 
-server.listen( process.env.PORT || port )
+function deleteTodo(body, response) {
+  const id = body.id != null ? String(body.id) : null;
+  if (!id) return badRequest(response, "id is required");
+
+  const before = appdata.length;
+  appdata = appdata.filter((t) => t.id !== id);
+
+  if (appdata.length === before) return notFound(response, "Todo not found");
+
+  const out = appdata.map(withDerived);
+  sendJSON(response, 200, out);
+}
+
+function handleStaticGet(request, response) {
+  const filename = dir + (request.url === "/" ? "index.html" : request.url.slice(1));
+  sendFile(response, filename);
+}
+
+function sendFile(response, filename) {
+  const type = mime.getType(filename) || "application/octet-stream";
+  fs.readFile(filename, (err, content) => {
+    if (err == null) {
+      response.writeHead(200, { "Content-Type": type });
+      response.end(content);
+    } else {
+      response.writeHead(404, { "Content-Type": "text/plain" });
+      response.end("404 Error: File Not Found");
+    }
+  });
+}
+
+function readBodyJSON(request, response, handler) {
+  let dataString = "";
+  request.on("data", (chunk) => (dataString += chunk));
+  request.on("end", () => {
+    let body = {};
+    if (dataString.trim() !== "") {
+      try {
+        body = JSON.parse(dataString);
+      } catch (e) {
+        return badRequest(response, "Invalid JSON body");
+      }
+    }
+    handler(body, response);
+  });
+}
+
+function sendJSON(response, code, obj) {
+  response.writeHead(code, { "Content-Type": "application/json" });
+  response.end(JSON.stringify(obj));
+}
+
+function badRequest(response, msg) {
+  response.writeHead(400, { "Content-Type": "application/json" });
+  response.end(JSON.stringify({ error: msg }));
+}
+
+function notFound(response, msg) {
+  response.writeHead(404, { "Content-Type": "application/json" });
+  response.end(JSON.stringify({ error: msg }));
+}
+
+//makes it easier to click location of the port when running server.
+server.listen(process.env.PORT || port, () => {
+  console.log(`Server running on http://localhost:${process.env.PORT || port}`);
+});
