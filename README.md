@@ -1,4 +1,4 @@
-Assignment 2 - Short Stack: Basic Two-tier Web Application using HTML/CSS/JS and Node.js  
+<img width="1512" height="749" alt="Screenshot 2025-09-10 at 7 41 00 PM" src="https://github.com/user-attachments/assets/18aca654-4058-407e-b419-afb121c818ac" />Assignment 2 - Short Stack: Basic Two-tier Web Application using HTML/CSS/JS and Node.js  
 ===
 
 ## To-Do List
@@ -12,6 +12,7 @@ https://a2-amandalongo-a25.onrender.com/
 - CSS is organized in an external stylesheet (`main.css`) and uses flexbox for layout, custom fonts from Google Fonts, and a variety of selectors for styling different elements and states. I also used Awesome Fonts for different icons
 - **Tech Achievement 2**: One HTML Form, results and validation
 - The application uses a single HTML form for adding new tasks, with client-side validation to prevent empty submissions. The form includes a text input for the task and a date input for the due date.
+<img width="1512" height="749" alt="Screenshot 2025-09-10 at 7 41 00 PM" src="https://github.com/user-attachments/assets/743192cb-e18f-434d-9916-286ed18528f9" />
 - All tasks are displayed in a dynamic, live-updating list on the main page. The list is fetched from the server using JavaScript and updated whenever tasks are added, edited, or deleted.
 - **Tech Achievement 3**: Ability to modify existing data
 - Users can edit existing tasks and due dates directly in the UI using inline editing. When a task is edited, the changes are sent to the server and the updated dataset is returned and rendered immediately.
