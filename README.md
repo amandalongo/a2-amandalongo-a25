@@ -1,4 +1,4 @@
-<img width="1512" height="749" alt="Screenshot 2025-09-10 at 7 41 00 PM" src="https://github.com/user-attachments/assets/18aca654-4058-407e-b419-afb121c818ac" />Assignment 2 - Short Stack: Basic Two-tier Web Application using HTML/CSS/JS and Node.js  
+Assignment 2 - Short Stack: Basic Two-tier Web Application using HTML/CSS/JS and Node.js
 ===
 
 ## To-Do List
