@@ -1,61 +1,29 @@
 Assignment 2 - Short Stack: Basic Two-tier Web Application using HTML/CSS/JS and Node.js  
 ===
 
-- a `Server` which not only serves files, but also maintains a tabular dataset with 3 or more fields related to your application
-- a `Results` functionality which shows the entire dataset residing in the server's memory
-- a `Form/Entry` functionality which allows a user to add or delete data items residing in the server's memory
-- a `Server Logic` which, upon receiving new or modified "incoming" data, includes and uses a function that adds at least one additional derived field to this incoming data before integrating it with the existing dataset
-- the `Derived field` for a new row of data must be computed based on fields already existing in the row. 
-For example, a `todo` dataset with `task`, `priority`, and `creation_date` may generate a new field `deadline` by looking at `creation_date` and `priority`
-
-Your application is required to demonstrate the use of the following concepts:
-
-HTML (4 pts each, total 16 pts):
-- One or more [HTML Forms](https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms), with any combination of form tags appropriate for the user input portion of the application
-- A results page displaying all data currently available on the server. You will most likely use a `<table>` tag for this, but `<ul>` or `<ol>` could also work and might be simpler to work with. Alternatively, you can create a single-page app (see Technical Acheivements) but this is not a requirement.
-- All pages should [validate](https://validator.w3.org)
-- If your app contains multple pages, they should all be accessible from the homepage (index.html)
-
-CSS (4 pts each, total 16 pts):
-- CSS styling of the primary visual elements in the application
-- Various CSS Selector functionality must be demonstrated:
-    - Element selectors
-    - ID selectors
-    - Class selectors
-- CSS positioning and styling of the primary visual elements in the application:
-    - Use of either a CSS grid or flexbox for layout
-    - Rules defining fonts for all text used; no default fonts! Be sure to use a web safe font or a font from a web service like [Google Fonts](http://fonts.google.com/)
-- CSS defined in a maintainable, readable form, in external stylesheets 
-
-JavaScript (4 pts):
-- At minimum, a small amount of front-end JavaScript to get / fetch data from the server; a sample is provided in this repository.
-
-Node.js (4 pts):
-- An HTTP Server that delivers all necessary files and data for the application, and also creates the required `Derived Fields` in your data. 
-A starting point is provided in this repository.
-
-
-Acheivements
----
-
-Below are suggested technical and design achievements. You can use these to help customize the assignment to your personal interests. These are recommended acheivements, but feel free to create/implement your own... just make sure you thoroughly describe what you did in your README and why it was challenging. ALL ACHIEVEMENTS MUST BE DESCRIBED IN YOUR README IN ORDER TO GET CREDIT FOR THEM. Remember, the highest grade you can get on any individual assignment is a 100%.
-
-*Technical*
-- (5 points) Create a single-page app that both provides a form for users to submit data and always shows the current state of the server-side data. To put it another way, when the user submits data, the server should respond sending back the updated data (including the derived field calculated on the server) and the client should then update its data display.
-
-- (5 points) In addition to a form enabling adding and deleting data on the server, also add the ability to modify existing data.
-
-
 ## To-Do List
-My application is a simple to do list / assignment tracker with a progress bar and ability to implement a due date feature. It is a cute pixel style that mimics a game style. When first loading into my application, there will be a sample task displayed, you can delete that and start adding in your own tasks. The progress bar will keep track of the amount of tasks you have left to complete and will celebrate when you complete all of them correctly! The CSS positioning I used was mainly a CSS grid. I used the main.css file for a majority of my styling, but for inline editing and the confetti I supplemented within main.js client side to properly format those extra features. 
+My application is a simple to do list / assignment tracker with a progress bar and ability to implement a due date feature. It is a cute pixel style that mimics a game style. When first loading into my application, there will be a sample task displayed, you can delete that and start adding in your own tasks. The progress bar will keep track of the amount of tasks you have left to complete and will celebrate when you complete all of them correctly! The CSS positioning I used was mainly a CSS flexboxes. I used the main.css file for a majority of my styling, but for inline editing and the confetti I supplemented within main.js client side to properly format those extra features. 
+
+Render Link:
 https://a2-amandalongo-a25.onrender.com/
 
 ## Technical Achievements
 - **Tech Achievement 1**: Using a combination of CSS Selector Functionality
+- CSS is organized in an external stylesheet (`main.css`) and uses flexbox for layout, custom fonts from Google Fonts, and a variety of selectors for styling different elements and states. I also used Awesome Fonts for different icons
 - **Tech Achievement 2**: One HTML Form, results and validation
+- The application uses a single HTML form for adding new tasks, with client-side validation to prevent empty submissions. The form includes a text input for the task and a date input for the due date.
+- All tasks are displayed in a dynamic, live-updating list on the main page. The list is fetched from the server using JavaScript and updated whenever tasks are added, edited, or deleted.
 - **Tech Achievement 3**: Ability to modify existing data
+- Users can edit existing tasks and due dates directly in the UI using inline editing. When a task is edited, the changes are sent to the server and the updated dataset is returned and rendered immediately.
 - **Tech Achievement 4**: Implemented all necessary/required functionalities
+- The server maintains a tabular dataset of tasks, each with fields for task name, creation date, due date, completion status, and a derived field for days until due. This dataset is stored in memory and updated in real time.
+- Tasks can be deleted with a single click, and the UI updates instantly to reflect the change. The server removes the task from its dataset and returns the new list.
 - **Tech Achievement 5**: Due in ___ days feature using derived field 
+- The derived field is displayed in the UI as "Due in X days", "Due today", or "Overdue by X days", depending on the value. This provides clear feedback to users about upcoming and overdue tasks. 
+- The server logic includes a function to compute a derived field (`days_until_due`) for each task, based on the due date and current date. This field is recalculated every time the dataset is updated.
+- This was specifically difficult because calculating Days Until Due within the server size was giving me wrong timing and wasn't super accurate with what I ended up finding because of my testers. I think I had issues with the timing and when exactly things were due especially since time is a factor when it comes to due dates. I would have liked to have spent more time researching and figuring out how to get past this problem, but I ran out of time since I did my testing so late. 
+- **Tech Achievement 6**: Progress Tracker 
+- The progress bar at the top of the app visually tracks the number of completed tasks versus total tasks. When all tasks are completed, a confetti animation celebrates the achievement.
 
 ### Design/Evaluation Achievements
 - **Design Achievement 1**:
